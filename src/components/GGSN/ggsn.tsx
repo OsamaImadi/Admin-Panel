@@ -1,9 +1,11 @@
-import React, { Fragment, Dispatch } from "react";
+import React, { Fragment } from "react";
 import TopCard from "../../common/components/TopCard";
-import { orders } from './../../data/orders';
+import { business } from './../../data/964Business';
+import { ggsn } from './../../data/ggsn';
 const table = require("react-bootstrap-table");
 
 let { BootstrapTable, TableHeaderColumn } = table;
+
 
 function indexN(cell: any, row: any, enumObject: any, index: any) {
     return (<div>{index + 1}</div>)
@@ -11,7 +13,7 @@ function indexN(cell: any, row: any, enumObject: any, index: any) {
 
 
 
-const Orders: React.FC = () => {
+const Ggsn: React.FC = () => {
 
     const options = {
         sortIndicator: true,
@@ -23,22 +25,17 @@ const Orders: React.FC = () => {
         withFirstAndLast: false,
     };
 
-    let ordersTotal = 0;
-    for (let element of orders) {
-        ordersTotal = ordersTotal + element.total;
-    }
-
     return (
         <Fragment>
-            <h1 className="h3 mb-2 text-gray-800">Business Orders</h1>
+            <h1 className="h3 mb-2 text-gray-800">GGSN</h1>
 
             <div className="row">
-                <TopCard title="TOTAL BUSINESS ORDERS" text={orders.length.toString()} icon="donate" class="primary" />
-                <TopCard title="TOTAL AMOUNT" text={`Rs ${ordersTotal}/-`} icon="calculator" class="danger" />
+                <TopCard title="TOTAL RECORDS" text={ggsn.length.toString()} icon="donate" class="primary" />
+                {/* <TopCard title="TOTAL AMOUNT" text={`Rs ${ggsnTotal}/-`} icon="calculator" class="danger" /> */}
             </div>
 
             <BootstrapTable
-                data={orders}
+                data={ggsn}
                 keyField="id"
                 version="4"
                 condensed
@@ -50,39 +47,52 @@ const Orders: React.FC = () => {
             >
                 <TableHeaderColumn dataField="any" width="100" dataFormat={indexN}>#</TableHeaderColumn>
                 <TableHeaderColumn
-                    dataField="boDate"
-                    dataSort
+                    dataField="ggsnDate"
                     width="100"
                 >
-                    boDate
+                    ggsnDate
                 </TableHeaderColumn>
                 <TableHeaderColumn
-                    dataField="total"
-                    dataSort
+                    dataField="cdrCountTb"
                     width="100"
                 >
-                    Total
+                    cdrCountTb
                 </TableHeaderColumn>
                 <TableHeaderColumn
-                    dataField="dff"
-                    dataSort
+                    dataField="bossUsageTb"
                     width="100"
                 >
-                    dff
+                    bossUsageTb
                 </TableHeaderColumn>
                 <TableHeaderColumn
-                    dataField="bo3MinCnt"
-                    dataSort
+                    dataField="ggsnUsageTb"
                     width="100"
                 >
-                    bo3MinCnt
+                    ggsnUsageTb
                 </TableHeaderColumn>
                 <TableHeaderColumn
-                    dataField="bo1MinCnt"
-                    dataSort
+                    dataField="freeFb"
                     width="100"
                 >
-                    bo1MinCnt
+                    freeFb
+                </TableHeaderColumn>
+                <TableHeaderColumn
+                    dataField="ggsnUsageWoFbTb"
+                    width="100"
+                >
+                    ggsnUsageWoFbTb
+                </TableHeaderColumn>
+                <TableHeaderColumn
+                    dataField="diffBossGgsn"
+                    width="100"
+                >
+                    diffBossGgsn
+                </TableHeaderColumn>
+                <TableHeaderColumn
+                    dataField="varianceValue"
+                    width="100"
+                >
+                    varianceValue
                 </TableHeaderColumn>
             </BootstrapTable>
 
@@ -90,4 +100,4 @@ const Orders: React.FC = () => {
     )
 }
 
-export default Orders;
+export default Ggsn;

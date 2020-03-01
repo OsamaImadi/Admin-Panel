@@ -1,6 +1,6 @@
-import React, { Fragment, Dispatch } from "react";
+import React, { Fragment } from "react";
 import TopCard from "../../common/components/TopCard";
-import { orders } from './../../data/orders';
+import { ocsHitsData } from '../../data/ocsHitsData';
 const table = require("react-bootstrap-table");
 
 let { BootstrapTable, TableHeaderColumn } = table;
@@ -11,7 +11,7 @@ function indexN(cell: any, row: any, enumObject: any, index: any) {
 
 
 
-const Orders: React.FC = () => {
+const OcsHitsData: React.FC = () => {
 
     const options = {
         sortIndicator: true,
@@ -23,22 +23,22 @@ const Orders: React.FC = () => {
         withFirstAndLast: false,
     };
 
-    let ordersTotal = 0;
-    for (let element of orders) {
-        ordersTotal = ordersTotal + element.total;
+    let ocsHitsDataTotal = 0;
+    for (let element of ocsHitsData) {
+        ocsHitsDataTotal = ocsHitsDataTotal + element.total;
     }
 
     return (
         <Fragment>
-            <h1 className="h3 mb-2 text-gray-800">Business Orders</h1>
+            <h1 className="h3 mb-2 text-gray-800">OCS hits Data</h1>
 
             <div className="row">
-                <TopCard title="TOTAL BUSINESS ORDERS" text={orders.length.toString()} icon="donate" class="primary" />
-                <TopCard title="TOTAL AMOUNT" text={`Rs ${ordersTotal}/-`} icon="calculator" class="danger" />
+                <TopCard title="TOTAL RECORDS" text={ocsHitsData.length.toString()} icon="donate" class="primary" />
+                <TopCard title="TOTAL AMOUNT" text={`Rs ${ocsHitsDataTotal}/-`} icon="calculator" class="danger" />
             </div>
 
             <BootstrapTable
-                data={orders}
+                data={ocsHitsData}
                 keyField="id"
                 version="4"
                 condensed
@@ -50,11 +50,11 @@ const Orders: React.FC = () => {
             >
                 <TableHeaderColumn dataField="any" width="100" dataFormat={indexN}>#</TableHeaderColumn>
                 <TableHeaderColumn
-                    dataField="boDate"
+                    dataField="getDate"
                     dataSort
                     width="100"
                 >
-                    boDate
+                    getDate
                 </TableHeaderColumn>
                 <TableHeaderColumn
                     dataField="total"
@@ -63,31 +63,10 @@ const Orders: React.FC = () => {
                 >
                     Total
                 </TableHeaderColumn>
-                <TableHeaderColumn
-                    dataField="dff"
-                    dataSort
-                    width="100"
-                >
-                    dff
-                </TableHeaderColumn>
-                <TableHeaderColumn
-                    dataField="bo3MinCnt"
-                    dataSort
-                    width="100"
-                >
-                    bo3MinCnt
-                </TableHeaderColumn>
-                <TableHeaderColumn
-                    dataField="bo1MinCnt"
-                    dataSort
-                    width="100"
-                >
-                    bo1MinCnt
-                </TableHeaderColumn>
             </BootstrapTable>
 
         </Fragment>
     )
 }
 
-export default Orders;
+export default OcsHitsData;

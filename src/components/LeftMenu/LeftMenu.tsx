@@ -1,6 +1,9 @@
 import React, { Fragment, useState } from "react";
 import { Link } from "react-router-dom";
 
+import './index.css'
+const zongLogo = require('../../assets/Zong-logo.png')
+
 const LeftMenu: React.FC = () => {
 
     let [leftMenuVisibility, setLeftMenuVisibility] = useState(false);
@@ -17,7 +20,8 @@ const LeftMenu: React.FC = () => {
         <Fragment>
             <div className="toggle-area">
                 <button className="btn btn-primary toggle-button" onClick={() => changeLeftMenuVisibility()}>
-                    <i className="fas fa-bolt"></i>
+                    {/* <i className="fas fa-bolt"></i> */}
+
                 </button>
             </div>
 
@@ -26,9 +30,9 @@ const LeftMenu: React.FC = () => {
 
                 <a className="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
                     <div className="sidebar-brand-icon icon-green rotate-n-15">
-                        <i className="fas fa-bolt"></i>
+                        {/* <i className="fas fa-bolt"></i> */}
+                        <img className='zong-logo' src={zongLogo} alt='zong-logo' />
                     </div>
-                    <div className="sidebar-brand-text mx-3">REACT <sup>Admin</sup></div>
                 </a>
 
                 <hr className="sidebar-divider my-0" />
@@ -43,36 +47,86 @@ const LeftMenu: React.FC = () => {
 
                 <hr className="sidebar-divider" />
                 <div className="sidebar-heading">
-                    Warehouse
+                    Weekly
                 </div>
 
-                <li className="nav-item">
-                    <Link className="nav-link" to={`/products`}>
-                        <i className="fas fa-fw fa-warehouse"></i>
-                        <span>Products</span>
-                    </Link>
-                </li>
 
                 <li className="nav-item">
                     <Link className="nav-link" to={`/orders`}>
                         <i className="fas fa-fw fa-dollar-sign"></i>
-                        <span>Orders</span>
+                        <span>Business Orders</span>
+                    </Link>
+                </li>
+
+
+                <li className="nav-item">
+                    <Link className="nav-link" to={`/ggsn`}>
+                        <i className="fas fa-fw fa-dollar-sign"></i>
+                        <span>GGSN</span>
+                    </Link>
+                </li>
+
+
+                <hr className="sidebar-divider" />
+                <div className="sidebar-heading">
+                    Boss Hits in Million
+                </div>
+
+                <li className="nav-item">
+                    <Link className="nav-link" to={`/rent`}>
+                        <i className="fas fa-fw fa-dollar-sign"></i>
+                        <span>Rent</span>
+                    </Link>
+                </li>
+
+                <li className="nav-item">
+                    <Link className="nav-link" to={`/business`}>
+                        <i className="fas fa-fw fa-dollar-sign"></i>
+                        <span>964Business</span>
+                    </Link>
+                </li>
+
+                <li className="nav-item">
+                    <Link className="nav-link" to={`/ocs-hits-data`}>
+                        <i className="fas fa-fw fa-dollar-sign"></i>
+                        <span>OCS Hits Data</span>
+                    </Link>
+                </li>
+
+                <li className="nav-item">
+                    <Link className="nav-link" to={`/ocs-hits-sms`}>
+                        <i className="fas fa-fw fa-dollar-sign"></i>
+                        <span>OCS Hits SMS</span>
+                    </Link>
+                </li>
+
+                <li className="nav-item">
+                    <Link className="nav-link" to={`/ocs-hits-voice`}>
+                        <i className="fas fa-fw fa-dollar-sign"></i>
+                        <span>OCS Hits Voice</span>
+                    </Link>
+                </li>
+
+                <li className="nav-item">
+                    <Link className="nav-link" to={`/sms`}>
+                        <i className="fas fa-fw fa-dollar-sign"></i>
+                        <span>SMS Subscriptions</span>
                     </Link>
                 </li>
 
                 <hr className="sidebar-divider" />
 
-                <div className="sidebar-heading">
-                    Admin
-                </div>
+                {/* <div className="sidebar-heading">
+                    GGSN
+                </div> */}
 
 
-                <li className="nav-item">
+                {/* <li className="nav-item">
                     <Link className="nav-link" to={`/users`}>
                         <i className="fas fa-fw fa-user"></i>
                         <span>Users</span>
                     </Link>
-                </li>
+                </li> */}
 
                 <hr className="sidebar-divider d-none d-md-block" />
             </ul>

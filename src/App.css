@@ -61,12 +61,13 @@ body {
 }
 
 .bg-gradient-primary-green {
-    background-image: linear-gradient(180deg,#0e1e24 10%, #00c6b6 100%);
+    background-image: linear-gradient(180deg,#0e1e24 10%, #8dc63e 100%);
     background-size: cover;
 }
 
 .icon-green {
-    color: seagreen;
+    /* color: seagreen; */
+    color: #8dc63e;
 }
 
 .bg-custom-dark {
@@ -103,7 +104,8 @@ li a {
     background-color: #0e1e24 !important;
     border-color: #0e1e24 !important;
     width: 40px;
-    color: seagreen !important;
+    /* color: seagreen !important; */
+    color: #8dc63e;
 }
 
 
