@@ -1,50 +1,47 @@
 import React, { Fragment, useState, useEffect } from "react";
 import ReactApexChart from "react-apexcharts";
 import loadable from 'loadable-components';
-
 import { Formik, Field, Form, ErrorMessage } from 'formik'
 import axios from 'axios'
 import moment from 'moment'
-
+import "./ivr.css";
 import DatePicker from './../../common/components/datePicker';
 import Spinner from '../../common/components/Spinner'
-import { getRent } from "../../services/rent.services";
+import { getIVR } from "../../services/ivr.services";
 import TopCard from "../../common/components/TopCard";
-import "./Rent.css";
-import { Rent } from '../../data/rent';
+import { ivr } from './../../data/ivr';
+
+
 var numeral = require('numeral');
 const table = require("react-bootstrap-table");
 
-//http://localhost:8081//zongPortal/Rent/Custom/01-APR-2020&02-APR-2020
-
 let { BootstrapTable, TableHeaderColumn } = table;
 
-function indexN(cell: any, row: any, enumObject: any, index: any) {
-  return (<div>{index + 1}</div>)
-}
+//http://localhost:8087//zongPortal/IVR/Custom/01-APR-2020&02-APR-2020
 
 
-const Rents: React.FC = () => {
 
-  const [rent, setRent] = useState();
+const Ivr: React.FC = () => {
+
+  const [ivre, setIvr] = useState();
   const [loading, setLoading] = useState(0);
 
   useEffect(() => {
-
     let total:number=0;
 
-      getRent()
-          .then((data: any) => {
+      getIVR()
+        .then((data: any) => {
 
-            data.data.map((r:any) => {
-              total = total + r.total
-            })
-            data.data.map((r:any) => {
-              r.actionDate = moment(r.actionDate).format('DD-MMM-YYYY').toUpperCase();
-              return r;
-            })
+          data.data.map((r:any) => {
+            total = total + r.total
+          })
+          data.data.map((r:any) => {
+            r.actionDate = moment(r.actionDate).format('DD-MMM-YYYY').toUpperCase();
+            return r;
+          })
 
-            setRent(data);
+
+        setIvr(data);
             setLoading(1)
           });
   }, []);
@@ -54,10 +51,15 @@ const Rents: React.FC = () => {
     return <Spinner />;
 }
 
+const initialValues = {
+  startDate: '',
+  endDate: ''
+}
+
   let series = [{
     name: "Rent",
-    data: rent? rent.data.map((r:any) => r.total): rent
-    // data: rent? rent.map((r:any) => r.total): rent
+    data: ivre? ivre.data.map((r:any) => r.total): ivre
+    // data: ivre? ivre.map((r:any) => r.total): ivre
   }]
   let optionsGraph = {
     chart: {
@@ -84,17 +86,13 @@ const Rents: React.FC = () => {
       },
     },
     xaxis: {
-      //categories: rent? rent.data.map((r:any) => r.createDate):rent,
+      //categories: ivre? ivre.data.map((r:any) => r.action_date):ivre,
 
-      categories: rent? rent.data.map((r:any) => {
+      categories: ivre? ivre.data.map((r:any) => {
         let date = moment(r.action_date).format('DD-MMM-YYYY').toUpperCase();
         return date;
-       }):rent,
+       }):ivre,
     }
-  }
-  const initialValues = {
-    startDate: '',
-    endDate: ''
   }
 
   const options = {
@@ -107,23 +105,20 @@ const Rents: React.FC = () => {
     withFirstAndLast: false,
   };
 
-  let totalRent = 0;
-  for (let element of Rent) {
-    totalRent = totalRent + element.total;
-  }
+  let totalEtop = 0;
+  // for (let element of etope) {
+  //   totalEtop = totalEtop + element.total;
+  // }
   return (
     <Fragment>
-
       <div className="headings-style">
-      <h4>Rent Statistics</h4>  
+      <h4>IVR Statistics</h4>  
       </div>
-
       <div className="row">
-        <TopCard title="TOTAL NUMBER OF RECORDS" text={`${rent ? rent.data.length.toString() : rent}`} icon="box" class="primary" />
+        <TopCard title="TOTAL NUMBER OF RECORDS" text={`${ivre ? ivre.data.length.toString() : ivre}`} icon="box" class="primary" />
         
       </div>
-
-  
+      
       <Formik
       initialValues={initialValues}
       onSubmit={values => {
@@ -131,9 +126,9 @@ const Rents: React.FC = () => {
         console.log("VALUES::::::", values)
         let start = moment(values.startDate).format('DD-MMM-YYYY').toUpperCase();
         let end = moment(values.endDate).format('DD-MMM-YYYY').toUpperCase();
-        axios.get(`http://localhost:8081/zongPortal/Rent/Custom/${start}&${end}`)
+        axios.get(`http://localhost:8087//zongPortal/IVR/Custom/${start}&${end}`)
           .then((data:any)=>{
-            setRent(data);
+            setIvr(data);
           })
 
       }}
@@ -142,7 +137,7 @@ const Rents: React.FC = () => {
           <Form
           translate="yes"
           >
-        <div className=" second-heading-style ">
+          <div className=" second-heading-style ">
         <h5 >Date Range</h5>
         </div>
 
@@ -166,7 +161,7 @@ const Rents: React.FC = () => {
           <button
             type='submit'
             onClick={()=>handleSubmit}
-            className=' btn-hire '
+            className='btn-hire '
             >
             Query
           </button>
@@ -177,20 +172,15 @@ const Rents: React.FC = () => {
         )}
       </Formik>
 
-      <div className=" second-heading-style ">
-        <h5 >Data Values</h5>
-        </div>
-
-      <BootstrapTable className= "form-container "
-        data={rent ? rent.data : rent}
-        // data={rent}
+      <BootstrapTable className= "form-container " 
+        data={ivre ? ivre.data : ivre}
         keyField="id"
         version="4"
         condensed
-     
+        
         hover
         pagination
-       
+        
         options={options}
       >
       
@@ -212,7 +202,7 @@ const Rents: React.FC = () => {
         </TableHeaderColumn>
       </BootstrapTable>
 
-      <div className= "form-container " id="chart">
+      <div className= "form-container "  id="chart">
         <LoadableChart options={optionsGraph} series={series} type="line" height={350} />
       </div>
 
@@ -220,6 +210,6 @@ const Rents: React.FC = () => {
   );
 };
 
-export default Rents;
+export default Ivr;
 
 const LoadableChart = loadable(() => import('react-apexcharts'))

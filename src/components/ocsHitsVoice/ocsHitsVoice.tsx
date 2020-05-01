@@ -1,10 +1,19 @@
 import React, { Fragment, useState, useEffect } from "react";
 import ReactApexChart from "react-apexcharts";
-
+import { Formik, Field, Form, ErrorMessage } from 'formik'
+import axios from 'axios'
+import moment from 'moment'
+import "./ocsVoice.css";
+import DatePicker from './../../common/components/datePicker';
+import Spinner from '../../common/components/Spinner'
 import { getOcsVoice } from "../../services/ocsVoice.services";
 import TopCard from "../../common/components/TopCard";
 import { ocsHitVoice } from './../../data/ocsHitVoice';
 const table = require("react-bootstrap-table");
+var numeral = require('numeral');
+
+// http://localhost:8084/zongPortal/OcsHits/Voice/Custom/11-APR-2020&12-APR-2020
+
 
 let { BootstrapTable, TableHeaderColumn } = table;
 function indexN(cell: any, row: any, enumObject: any, index: any) {
@@ -17,16 +26,43 @@ const OcsHitsVoice: React.FC = () => {
 
         
     const [ocsVoice, setocsVoice] = useState();
+    const [loading, setLoading] = useState(0);
 
     useEffect(() => {
+
+      let total:number=0;
+
         getOcsVoice()
             .then((data: any) => {
+            
+
+              data.data.map((r:any) => {
+                total = total + r.total
+              })
+              data.data.map((r:any) => {
+                r.actionDate = moment(r.actionDate).format('DD-MMM-YYYY').toUpperCase();
+                return r;
+              })
+
                 setocsVoice(data);
+                setLoading(1)
             });
     }, []);
 
+    
+    if (!loading) {
+      return <Spinner />;
+  }
+
+  const initialValues = {
+    startDate: '',
+    endDate: ''
+  }
+  
+
+
     let series = [{
-        name: "OCS Hits Data",
+        name: "OCS Voice Hits",
         data: ocsVoice? ocsVoice.data.map((r:any) => r.total): ocsVoice
       }]
       let optionsGraph = {
@@ -44,7 +80,7 @@ const OcsHitsVoice: React.FC = () => {
           curve: 'straight'
         },
         title: {
-          text: 'Rent By Date',
+          text: 'Graphical Representation',
           align: 'left'
         },
         grid: {
@@ -54,7 +90,13 @@ const OcsHitsVoice: React.FC = () => {
           },
         },
         xaxis: {
-          categories: ocsVoice? ocsVoice.data.map((r:any) => r.getDate):ocsVoice,
+         // categories: ocsVoice? ocsVoice.data.map((r:any) => r.action_date):ocsVoice,
+
+          categories: ocsVoice? ocsVoice.data.map((r:any) => {
+            let date = moment(r.action_date).format('DD-MMM-YYYY').toUpperCase();
+            return date;
+           }):ocsVoice,
+
         }
       }
 
@@ -76,31 +118,93 @@ const OcsHitsVoice: React.FC = () => {
 
     return (
         <Fragment>
-            <h1 className="h3 mb-2 text-gray-800">OCS hits Voice</h1>
+            <div className="headings-style">
+      <h4>OCS Authentication (Voice)</h4>  
+      </div>
 
             <div className="row">
                 <TopCard title="TOTAL RECORDS" text={ocsVoice ? ocsVoice.data.length.toString() : ocsVoice} icon="donate" class="primary" />
-                <TopCard title="TOTAL AMOUNT" text={`Rs ${ocsHitVoiceTotal}/-`} icon="calculator" class="danger" />
+                
             </div>
+            
+      <Formik
+      initialValues={initialValues}
+      onSubmit={values => {
+       // http://localhost:8086/zongPortal/Etop/Custom/11-APR-2020&12-APR-2020
+        console.log("VALUES::::::", values)
+        let start = moment(values.startDate).format('DD-MMM-YYYY').toUpperCase();
+        let end = moment(values.endDate).format('DD-MMM-YYYY').toUpperCase();
+        axios.get(`http://localhost:8084/zongPortal/OcsHits/Voice/Custom/${start}&${end}`)
+          .then((data:any)=>{
+            setocsVoice(data);
+          })
 
-            <BootstrapTable
+      }}
+      >
+        {({ errors, touched, values, handleSubmit }) => (
+          <Form
+          translate="yes"
+          >
+       <div className=" second-heading-style ">
+        <h5 >Date Range</h5>
+        </div>
+
+        <div className=' form-container form-row mt-3'>
+       
+        <div className='col-5'>
+          <Field
+            name='startDate'
+            component={DatePicker}
+            placeholder='Enter Start Date'
+          />
+        </div>
+        <div className='col-5'>
+          <Field
+            name='endDate'
+            component={DatePicker}
+            placeholder='Enter End Date'
+          />
+        </div>
+        <div className='col-2 ml-0 pl-0'>
+          <button
+            type='submit'
+            onClick={()=>handleSubmit}
+            className=' btn-hire '
+            >
+            Query
+          </button>
+       </div>
+      </div>
+          </Form>
+      
+        )}
+      </Formik>
+ 
+     
+        <div className=" second-heading-style ">
+        <h5 >Data Values</h5>
+        </div>
+
+
+
+            <BootstrapTable  className= "form-container "
                 data={ocsVoice ? ocsVoice.data : ocsVoice}
                 keyField="id"
                 version="4"
                 condensed
-                striped
+               
                 hover
                 pagination
-                search
+                
                 options={options}
             >
-                <TableHeaderColumn dataField="any" width="100" dataFormat={indexN}>#</TableHeaderColumn>
+                {/* <TableHeaderColumn dataField="any" width="100" dataFormat={indexN}>S.No.</TableHeaderColumn> */}
                 <TableHeaderColumn
-                    dataField="getDate"
+                    dataField="action_date"
                     dataSort
                     width="100"
                 >
-                    getDate
+                    Date
                 </TableHeaderColumn>
                 <TableHeaderColumn
                     dataField="total"
@@ -110,7 +214,7 @@ const OcsHitsVoice: React.FC = () => {
                     Total
                 </TableHeaderColumn>
             </BootstrapTable>
-            <div id="chart">
+            <div   className= "form-container " id="chart">
         <ReactApexChart options={optionsGraph} series={series} type="line" height={350} />
       </div>
 

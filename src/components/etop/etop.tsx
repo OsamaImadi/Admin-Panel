@@ -1,50 +1,45 @@
 import React, { Fragment, useState, useEffect } from "react";
 import ReactApexChart from "react-apexcharts";
 import loadable from 'loadable-components';
-
 import { Formik, Field, Form, ErrorMessage } from 'formik'
 import axios from 'axios'
 import moment from 'moment'
-
-import DatePicker from './../../common/components/datePicker';
+import "./etop.css";
 import Spinner from '../../common/components/Spinner'
-import { getRent } from "../../services/rent.services";
+import DatePicker from './../../common/components/datePicker';
+import { getETOP } from "../../services/etop.services";
 import TopCard from "../../common/components/TopCard";
-import "./Rent.css";
-import { Rent } from '../../data/rent';
+import { etop } from '../../data/etop';
+
 var numeral = require('numeral');
 const table = require("react-bootstrap-table");
-
-//http://localhost:8081//zongPortal/Rent/Custom/01-APR-2020&02-APR-2020
-
 let { BootstrapTable, TableHeaderColumn } = table;
 
-function indexN(cell: any, row: any, enumObject: any, index: any) {
-  return (<div>{index + 1}</div>)
-}
 
+// function buttonFormatter(cell, row){
+//   return '<BootstrapButton type="submit"></BootstrapButton>';
+// }
 
-const Rents: React.FC = () => {
+const Etop: React.FC = () => {
 
-  const [rent, setRent] = useState();
+  const [etope, setEtop] = useState();
+  const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(0);
 
   useEffect(() => {
-
     let total:number=0;
-
-      getRent()
+    getETOP()
           .then((data: any) => {
-
+            
             data.data.map((r:any) => {
               total = total + r.total
             })
             data.data.map((r:any) => {
-              r.actionDate = moment(r.actionDate).format('DD-MMM-YYYY').toUpperCase();
+              r.action_date = moment(r.action_date).format('DD-MMM-YYYY').toUpperCase();
               return r;
             })
-
-            setRent(data);
+            setTotal(total)
+            setEtop(data);
             setLoading(1)
           });
   }, []);
@@ -54,19 +49,63 @@ const Rents: React.FC = () => {
     return <Spinner />;
 }
 
+const _handleSubmit =( values:any) => {
+  if(values.pickupDate){
+    let strDate= values.pickupDate;
+    values.pickupDateForText = strDate.toString()
+  }
+  console.log("BOOKING TIME VALUES*******",values)
+  // localStorage.setItem('step3', JSON.stringify(values))
+}
+
+const initialValues = {
+  startDate: '',
+  endDate: ''
+}
+
   let series = [{
-    name: "Rent",
-    data: rent? rent.data.map((r:any) => r.total): rent
-    // data: rent? rent.map((r:any) => r.total): rent
+    name: "ETOP",
+    data: etope? etope.data.map((r:any) => r.total): etope
+    // data: etope? etope.map((r:any) => r.total): etope
+
+    
+
+
   }]
   let optionsGraph = {
     chart: {
       height: 350,
       type: 'line',
       zoom: {
-        enabled: false
+        enabled: true
       }
     },
+
+    annotations: {
+      
+      points: [{
+        x: '12-APR-2020',
+        y: 1575594,
+        marker: {
+          size: 8,
+          fillColor: '#fff',
+          strokeColor: 'red',
+          radius: 2,
+          cssClass: 'apexcharts-custom-class'
+        },
+        label: {
+          borderColor: '#FF4560',
+          offsetY: 0,
+          style: {
+            color: '#fff',
+            background: '#FF4560',
+          },
+    
+          text: 'Point Annotation',
+        }
+      }]
+    },
+
     dataLabels: {
       enabled: false
     },
@@ -75,7 +114,7 @@ const Rents: React.FC = () => {
     },
     title: {
       text: 'Graphical Representation',
-      align: 'left'
+      align: 'center'
     },
     grid: {
       row: {
@@ -84,17 +123,20 @@ const Rents: React.FC = () => {
       },
     },
     xaxis: {
-      //categories: rent? rent.data.map((r:any) => r.createDate):rent,
+      //categories: etope? etope.data.map((r:any) => r.action_date):etope,
 
-      categories: rent? rent.data.map((r:any) => {
+      categories: etope? etope.data.map((r:any) => {
         let date = moment(r.action_date).format('DD-MMM-YYYY').toUpperCase();
         return date;
-       }):rent,
-    }
-  }
-  const initialValues = {
-    startDate: '',
-    endDate: ''
+       }):etope,
+    }, 
+    // legend: {
+    //   position: 'top',
+    //   horizontalAlign: 'right',
+    //   floating: true,
+    //   offsetY: -25,
+    //   offsetX: -5
+    // }
   }
 
   const options = {
@@ -107,33 +149,41 @@ const Rents: React.FC = () => {
     withFirstAndLast: false,
   };
 
-  let totalRent = 0;
-  for (let element of Rent) {
-    totalRent = totalRent + element.total;
-  }
+  let totalEtop = 0;
+  // for (let element of etope) {
+  //   totalEtop = totalEtop + element.total;
+  // }
   return (
     <Fragment>
 
       <div className="headings-style">
-      <h4>Rent Statistics</h4>  
+      <h4>Etop Statistics</h4>  
       </div>
-
       <div className="row">
-        <TopCard title="TOTAL NUMBER OF RECORDS" text={`${rent ? rent.data.length.toString() : rent}`} icon="box" class="primary" />
+        <TopCard title="TOTAL NUMBER OF RECORDS" text={`${etope ? etope.data.length.toString() : etope}`} icon="box" class="primary" />
+        <TopCard title="TOTAL" text={`${total}`} icon="box" class="primary" />
         
       </div>
-
-  
+    
       <Formik
       initialValues={initialValues}
       onSubmit={values => {
+        let total = 0;
        // http://localhost:8086/zongPortal/Etop/Custom/11-APR-2020&12-APR-2020
         console.log("VALUES::::::", values)
         let start = moment(values.startDate).format('DD-MMM-YYYY').toUpperCase();
         let end = moment(values.endDate).format('DD-MMM-YYYY').toUpperCase();
-        axios.get(`http://localhost:8081/zongPortal/Rent/Custom/${start}&${end}`)
+        axios.get(`http://localhost:8086/zongPortal/Etop/Custom/${start}&${end}`)
           .then((data:any)=>{
-            setRent(data);
+            data.data.map((r:any) => {
+              total = total + r.total
+            })
+            data.data.map((r:any) => {
+              r.action_date = moment(r.action_date).format('DD-MMM-YYYY').toUpperCase();
+              return r;
+            })
+            setTotal(total)
+            setEtop(data);
           })
 
       }}
@@ -147,7 +197,6 @@ const Rents: React.FC = () => {
         </div>
 
         <div className=' form-container form-row mt-3'>
-       
         <div className='col-5'>
           <Field
             name='startDate'
@@ -166,7 +215,7 @@ const Rents: React.FC = () => {
           <button
             type='submit'
             onClick={()=>handleSubmit}
-            className=' btn-hire '
+            className='btn-hire '
             >
             Query
           </button>
@@ -180,46 +229,38 @@ const Rents: React.FC = () => {
       <div className=" second-heading-style ">
         <h5 >Data Values</h5>
         </div>
-
-      <BootstrapTable className= "form-container "
-        data={rent ? rent.data : rent}
-        // data={rent}
-        keyField="id"
-        version="4"
-        condensed
-     
-        hover
-        pagination
-       
-        options={options}
-      >
       
-      
-        {/* <TableHeaderColumn dataField="any" width="200" dataFormat={indexN}>S.No.</TableHeaderColumn> */}
-        <TableHeaderColumn
-          dataField="action_date"
-          dataSort
-          width="200"
-        >
-          Date 
-        </TableHeaderColumn>
-        <TableHeaderColumn
-          dataField="total"
-          dataSort
-          width="200"
-        >
-          Total
-        </TableHeaderColumn>
-      </BootstrapTable>
 
       <div className= "form-container " id="chart">
         <LoadableChart options={optionsGraph} series={series} type="line" height={350} />
       </div>
 
+
+      <div className="container">
+  <div className="row">
+    <div className="col-12">
+      <table className="table table-bordered">
+        <thead>
+          <tr>
+            <th data-Field="action_date" data-sortable= "true">Date </th>
+            <th data-Field="total" data-sortable= "true">Total </th>
+            <th data-Field="sumOfDifference" data-sortable= "true">sumOfDifference </th>
+           
+          </tr>
+        </thead>
+        
+      </table>
+    </div>
+  </div>
+</div>
+
+
     </Fragment >
   );
 };
 
-export default Rents;
+export default Etop;
+
+
 
 const LoadableChart = loadable(() => import('react-apexcharts'))

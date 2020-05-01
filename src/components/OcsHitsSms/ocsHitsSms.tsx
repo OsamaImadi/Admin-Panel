@@ -1,10 +1,18 @@
 import React, { Fragment, useState, useEffect } from "react";
 import ReactApexChart from "react-apexcharts";
-
+import { Formik, Field, Form, ErrorMessage } from 'formik'
+import axios from 'axios'
+import moment from 'moment'
+import "./ocsSMS.css";
+import DatePicker from './../../common/components/datePicker';
+import Spinner from '../../common/components/Spinner'
 import { getOcsSms } from "../../services/ocsSms.services";
 import TopCard from "../../common/components/TopCard";
 import { ocsHitSms } from './../../data/ocsHitSms';
+var numeral = require('numeral');
 const table = require("react-bootstrap-table");
+
+//http://localhost:8084/zongPortal/OcsHits/Sms/Custom/11-APR-2020&12-APR-2020
 
 let { BootstrapTable, TableHeaderColumn } = table;
 
@@ -18,16 +26,39 @@ const OcsHitsSms: React.FC = () => {
 
     
     const [ocsSms, setocsSms] = useState();
+    const [loading, setLoading] = useState(0);
 
     useEffect(() => {
+      let total:number=0;
+
         getOcsSms()
             .then((data: any) => {
+
+              data.data.map((r:any) => {
+                total = total + r.total
+              })
+              data.data.map((r:any) => {
+                r.actionDate = moment(r.actionDate).format('DD-MMM-YYYY').toUpperCase();
+                return r;
+              })
+    
                 setocsSms(data);
+                setLoading(1)
             });
     }, []);
+    
+    if (!loading) {
+      return <Spinner />;
+  }
 
+  
+  const initialValues = {
+    startDate: '',
+    endDate: ''
+  }
+  
     let series = [{
-        name: "OCS Hits Data",
+        name: "OCS Sms Hits",
         data: ocsSms? ocsSms.data.map((r:any) => r.total): ocsSms
       }]
       let optionsGraph = {
@@ -45,7 +76,7 @@ const OcsHitsSms: React.FC = () => {
           curve: 'straight'
         },
         title: {
-          text: 'Rent By Date',
+          text: 'Graphical Representation',
           align: 'left'
         },
         grid: {
@@ -55,7 +86,12 @@ const OcsHitsSms: React.FC = () => {
           },
         },
         xaxis: {
-          categories: ocsSms? ocsSms.data.map((r:any) => r.getDate):ocsSms,
+         // categories: ocsSms? ocsSms.data.map((r:any) => r.action_date):ocsSms,
+
+          categories: ocsSms? ocsSms.data.map((r:any) => {
+            let date = moment(r.action_date).format('DD-MMM-YYYY').toUpperCase();
+            return date;
+           }):ocsSms,
         }
       }
     
@@ -79,31 +115,92 @@ const OcsHitsSms: React.FC = () => {
 
     return (
         <Fragment>
-            <h1 className="h3 mb-2 text-gray-800">OCS hits SMS</h1>
+           <div className="headings-style">
+      <h4>OCS Authentication (SMS)</h4>  
+      </div>
 
             <div className="row">
                 <TopCard title="TOTAL RECORDS" text={ocsSms ? ocsSms.data.length.toString() : ocsSms} icon="donate" class="primary" />
-                <TopCard title="TOTAL AMOUNT" text={`Rs ${ocsHitSmsTotal}/-`} icon="calculator" class="danger" />
+                
             </div>
+            
+      <Formik
+      initialValues={initialValues}
+      onSubmit={values => {
+       // http://localhost:8086/zongPortal/Etop/Custom/11-APR-2020&12-APR-2020
+        console.log("VALUES::::::", values)
+        let start = moment(values.startDate).format('DD-MMM-YYYY').toUpperCase();
+        let end = moment(values.endDate).format('DD-MMM-YYYY').toUpperCase();
+        axios.get(`http://localhost:8084/zongPortal/OcsHits/Sms/Custom/${start}&${end}`)
+          .then((data:any)=>{
+            setocsSms(data);
+          })
 
-            <BootstrapTable
+      }}
+      >
+        {({ errors, touched, values, handleSubmit }) => (
+          <Form
+          translate="yes"
+          >
+        <div className=" second-heading-style ">
+        <h5 >Date Range</h5>
+        </div>
+
+        <div className=' form-container form-row mt-3'>
+       
+        <div className='col-5'>
+          <Field
+            name='startDate'
+            component={DatePicker}
+            placeholder='Enter Start Date'
+          />
+        </div>
+        <div className='col-5'>
+          <Field
+            name='endDate'
+            component={DatePicker}
+            placeholder='Enter End Date'
+          />
+        </div>
+        <div className='col-2 ml-0 pl-0'>
+          <button
+            type='submit'
+            onClick={()=>handleSubmit}
+            className='btn-hire '
+            >
+            Query
+          </button>
+       </div>
+      </div>
+          </Form>
+      
+        )}
+      </Formik>
+ 
+     
+        <div className=" second-heading-style ">
+        <h5 >Data Values</h5>
+        </div>
+
+
+            <BootstrapTable className= "form-container "
                 data={ocsSms ? ocsSms.data : ocsSms}
                 keyField="id"
                 version="4"
                 condensed
-                striped
+                
                 hover
                 pagination
-                search
+               
                 options={options}
             >
-                <TableHeaderColumn dataField="any" width="100" dataFormat={indexN}>#</TableHeaderColumn>
+                {/* <TableHeaderColumn dataField="any" width="100" dataFormat={indexN}>S.No.</TableHeaderColumn> */}
                 <TableHeaderColumn
-                    dataField="getDate"
+                    dataField="action_date"
                     dataSort
                     width="100"
                 >
-                    getDate
+                    Date
                 </TableHeaderColumn>
                 <TableHeaderColumn
                     dataField="total"
@@ -114,7 +211,7 @@ const OcsHitsSms: React.FC = () => {
                 </TableHeaderColumn>
             </BootstrapTable>
 
-            <div id="chart">
+            <div className= "form-container " id="chart">
         <ReactApexChart options={optionsGraph} series={series} type="line" height={350} />
       </div>
 

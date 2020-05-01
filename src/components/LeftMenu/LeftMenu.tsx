@@ -25,11 +25,11 @@ const LeftMenu: React.FC = () => {
                 </button>
             </div>
 
-            <ul className={`navbar-nav bg-gradient-primary-green sidebar sidebar-dark accordion ${getCollapseClass()}`}
+            <ul className={`navbar-nav ftco-hireme sidebar accordion ${getCollapseClass()}`}
                 id="collapseMenu">
 
                 <a className="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
-                    <div className="sidebar-brand-icon icon-green rotate-n-15">
+                    <div className="sidebar-brand-icon icon-green ">
                         {/* <i className="fas fa-bolt"></i> */}
                         <img className='zong-logo' src={zongLogo} alt='zong-logo' />
                     </div>
@@ -47,14 +47,20 @@ const LeftMenu: React.FC = () => {
 
                 <hr className="sidebar-divider" />
                 <div className="sidebar-heading">
-                    Weekly
+                    Weekly Statistics 
                 </div>
-
 
                 <li className="nav-item">
                     <Link className="nav-link" to={`/orders`}>
                     <i className="fas fa-briefcase"></i>
                         <span> Business Orders</span>
+                    </Link>
+                </li>
+
+                <li className="nav-item">
+                    <Link className="nav-link" to={`/totalEcdrs`}>
+                    <i className="fas fa-briefcase"></i>
+                        <span> Total ECDRs</span>
                     </Link>
                 </li>
 
@@ -66,16 +72,46 @@ const LeftMenu: React.FC = () => {
                     </Link>
                 </li>
 
+                <li className="nav-item">
+                    <Link className="nav-link" to={`/etop`}>
+                    <i className="fas fa-wifi"></i> 
+                               <span> ETOP</span>
+                    </Link>
+                </li>
+
+               
 
                 <hr className="sidebar-divider" />
                 <div className="sidebar-heading">
-                    Boss Hits in Million
+                    Monthly Statistics
                 </div>
 
                 <li className="nav-item">
                     <Link className="nav-link" to={`/rent`}>
                         <i className="fas fa-fw fa-dollar-sign"></i>
                         <span>Rent</span>
+                    </Link>
+                </li>
+
+                <li className="nav-item">
+                    <Link className="nav-link" to={`/ussd`}>
+                    <i className="fas fa-wifi"></i> 
+                               <span> USSD</span>
+                    </Link>
+                </li>
+
+                <li className="nav-item">
+                    <Link className="nav-link" to={`/mml`}>
+                    <i className="fas fa-wifi"></i> 
+                               <span> MML</span>
+                    </Link>
+                </li>
+
+
+                <li className="nav-item">
+                    <Link className="nav-link" to={`/ivr`}>
+                        <i className="fas fa-fw fa-dollar-sign"></i>
+                        <span>IVR</span>
                     </Link>
                 </li>
 

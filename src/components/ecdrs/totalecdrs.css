@@ -20,6 +20,32 @@
     background: #ec0080;
     
   }
+  .btn-graph{
+   
+   margin-left: 10px;
+   border: 0;
+   background: none;
+   text-align: center;
+   width: 120px;
+   height: 5vh;
+   outline: none;
+   color: white;
+   border-radius: 6px;
+   transition: 0.25s;
+   background: #8bc53f;
+   cursor: pointer;
+   margin-top: 10px;
+   margin-bottom: 10px;
+   margin-right: 10px;
+ }
+ 
+ .btn-graph:hover {
+   background: #ec0080;
+   
+ }
+ .btn-graph:focus {
+  background: #ec0080;
+ }
  .headings-style{
     margin-top:10px;
     margin-bottom: 20px;

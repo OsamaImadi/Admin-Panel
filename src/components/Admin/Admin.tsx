@@ -11,6 +11,12 @@ import OcsHitsData from './../ocsHitsData/ocsHitsData';
 import OcsHitsSms from './../OcsHitsSms/ocsHitsSms';
 import OcsHitsVoice from './../ocsHitsVoice/ocsHitsVoice';
 import SmsSubscription from './../smsSubscription/smsSubscription';
+import Etop from './../etop/etop';
+import Ivr from "../Ivr/ivr";
+import Ussd from "../Ussd/ussd";
+import Mml from "../Mml/mml";
+import TotalEcdrs from './../ecdrs/totalecdrs';
+
 
 const Admin: React.FC = () => {
 
@@ -30,6 +36,11 @@ const Admin: React.FC = () => {
               <Route path={`/ocs-hits-voice`}><OcsHitsVoice /></Route>
               <Route path={`/orders`}><Orders /></Route>
               <Route path={`/sms`}><SmsSubscription /></Route>
+              <Route path={'/etop'}><Etop /></Route>
+              <Route path={'/totalEcdrs'}><TotalEcdrs /></Route>
+              <Route path={'/ivr'}><Ivr /></Route>
+              <Route path={'/mml'}><Mml /></Route>
+              <Route path={'/ussd'}><Ussd /></Route>
               <Route path="/"><Home /></Route>
             </Switch>
           </div>
